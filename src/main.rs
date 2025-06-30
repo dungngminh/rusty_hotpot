@@ -1,61 +1,65 @@
-use std::fmt::Debug;
-
-#[derive(Debug)]
-struct User {
-    username: String,
-    email: String,
-    gender: i8, // 0: female, 1: male, 2: other
-    age: i16,
-    married: bool,
+enum Size {
+    XS(i16),
+    S(i16),
+    M(i16),
+    L(i16),
 }
 
-impl User {
-    // associated function
-    fn create_new(username: String, email: String, gender: i8, age: i16, married: bool) -> Self {
-        Self {
-            username: username,
-            email: email,
-            gender: gender,
-            age: age,
-            married: married,
-        }
-    }
+#[derive(Debug)]
+enum UiState {
+    Initial,
+    Loading,
+    Loaded { data: String },
+    Error { message: String },
+}
 
-    // method
-    fn is_adult(&self) -> bool {
-        self.age >= 18
+impl Size {
+    fn display(&self) {
+        match self {
+            Size::XS(size) => println!("Size: XS, {size}"),
+            Size::S(size) => println!("Size: S, {size}"),
+            Size::M(size) => println!("Size: M, {size}"),
+            Size::L(size) => println!("Size: L, {size}"),
+        }
     }
 }
 
 fn main() {
-    let user = User {
-        username: String::from("DzungMinh"),
-        email: String::from("dzungngminh@gmai.com"),
-        gender: 1,
-        age: 23,
-        married: false,
+    let xs_size = Size::XS(105);
+    let s_size = Size::S(110);
+    let m_size = Size::M(115);
+    let l_size = Size::L(120);
+
+    xs_size.display();
+    s_size.display();
+    m_size.display();
+    l_size.display();
+
+    let some_optional_size: Option<Size> = Some(Size::XS(1056));
+
+    let none_optional_size: Option<Size> = None;
+
+    some_optional_size.unwrap().display();
+
+    none_optional_size.unwrap_or(xs_size).display();
+
+    let mut ui_state = UiState::Initial;
+
+    println!("Ui State when initial is {ui_state:?}");
+
+    // call api
+    ui_state = UiState::Loading;
+    println!("Ui State when start call API is {ui_state:?}");
+
+    // call api
+    ui_state = UiState::Loaded {
+        data: String::from("Data"),
     };
+    println!("Ui State when loaded data is {ui_state:?}");
 
-    let user2 = User::create_new(
-        String::from("DzungMinh2"),
-        String::from("dzungngminh@gmai.com"),
-        1,
-        15,
-        false,
-    );
-
-    let is_user1_adult = user.is_adult();
-    let is_user2_adult = user2.is_adult();
-
-    println!("User: {user:?}");
-    println!("User2: {user2:?}");
-
-    println!(
-        "Is user1 adult: {}",
-        if is_user1_adult { "Yes" } else { "No" }
-    );
-    println!(
-        "Is user2 adult: {}",
-        if is_user2_adult { "Yes" } else { "No" }
-    );
+    // call api and has error
+    ui_state = UiState::Error {
+        message: String::from("Error"),
+    };
+    println!("Ui State when error is {ui_state:?}");
 }
